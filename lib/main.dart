@@ -1,46 +1,47 @@
 import 'package:flutter/material.dart';
 
-void main() => runApp(MyApp());
+void main() => runApp(MaterialApp(
+    title: 'Navigation',
+    initialRoute: '/',
+    routes: {
+      '/': (context) => FirstScreen(),
+      '/second': (context) => SecondScreen(),
+    }
+));
 
-class MyApp extends StatefulWidget {
+class FirstScreen extends StatelessWidget {
   @override
-  _MyAppState createState() => _MyAppState();
-}
-class _MyAppState extends State<MyApp> {
-  int _counter = 0;
-
-  @override
-  Widget build(BuildContext context) => MaterialApp(
-    title: 'Flutter Demo',
-    theme: ThemeData(
-      primarySwatch: Colors.blue,
+  Widget build(BuildContext context) => Scaffold(
+    appBar: AppBar(
+      title: Text('1番目のルート'),
     ),
-    home: Scaffold(
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            Text(
-              'You have pushed the button this many times:',
-            ),
-            Text(
-              '$_counter',
-              style: Theme.of(context).textTheme.display1,
-            ),
-          ],
-        ),
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _incrementCounter,
-        tooltip: 'Increment',
-        child: Icon(Icons.add),
+    body: Center(
+      child: RaisedButton(
+        child: Text('次の画面を開く'),
+        onPressed: () {
+          //SecondScreenへ遷移する処理
+          Navigator.pushNamed(context, '/second');
+        },
       ),
     ),
   );
-
-  void _incrementCounter() {
-    setState(() {
-      _counter++;
-    });
-  }
 }
+
+class SecondScreen extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) => Scaffold(
+    appBar: AppBar(
+      title: Text('２番目のルート'),
+    ),
+    body: Center(
+      child: RaisedButton(
+        onPressed: () {
+          //FirstScreenへ戻る処理
+          Navigator.pop(context);
+        },
+        child: Text('戻る'),
+      ),
+    ),
+  );
+}
+
