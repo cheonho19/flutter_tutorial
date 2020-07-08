@@ -1,47 +1,46 @@
 import 'package:flutter/material.dart';
 
 void main() => runApp(MaterialApp(
-    title: 'Navigation',
-    initialRoute: '/',
-    routes: {
-      '/': (context) => FirstScreen(),
-      '/second': (context) => SecondScreen(),
-    }
+  title: 'Navigation',
+  home: Scaffold(
+    appBar: AppBar(
+      title: Text('TapBox'),
+    ),
+    body: Center(
+      child: TapBoxA(),
+    ),
+  ),
 ));
 
-class FirstScreen extends StatelessWidget {
+class TapBoxA extends StatefulWidget {
   @override
-  Widget build(BuildContext context) => Scaffold(
-    appBar: AppBar(
-      title: Text('1番目のルート'),
-    ),
-    body: Center(
-      child: RaisedButton(
-        child: Text('次の画面を開く'),
-        onPressed: () {
-          //SecondScreenへ遷移する処理
-          Navigator.pushNamed(context, '/second');
-        },
+  _TapBoxAState createState() => _TapBoxAState();
+}
+
+class _TapBoxAState extends State<TapBoxA> {
+  bool _active = false;
+
+  @override
+  Widget build(BuildContext context) => GestureDetector(
+    onTap: _handleTap,
+    child: Container(
+      child: Center(
+        child: Text(
+          _active ? 'Active' : 'Inactive',
+          style: TextStyle(fontSize: 32.0, color: Colors.white),
+        ),
+      ),
+      width: 200.0,
+      height: 200.0,
+      decoration: BoxDecoration(
+        color: _active ? Colors.lightGreen[700] : Colors.grey[600],
       ),
     ),
   );
-}
 
-class SecondScreen extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) => Scaffold(
-    appBar: AppBar(
-      title: Text('２番目のルート'),
-    ),
-    body: Center(
-      child: RaisedButton(
-        onPressed: () {
-          //FirstScreenへ戻る処理
-          Navigator.pop(context);
-        },
-        child: Text('戻る'),
-      ),
-    ),
-  );
+  void _handleTap() {
+    setState(() {
+      _active = !_active;
+    });
+  }
 }
-
