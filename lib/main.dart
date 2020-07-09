@@ -7,18 +7,42 @@ void main() => runApp(MaterialApp(
       title: Text('TapBox'),
     ),
     body: Center(
-      child: TapBoxA(),
+      child: ParentWidget(),
     ),
   ),
 ));
 
-class TapBoxA extends StatefulWidget {
+class ParentWidget extends StatefulWidget {
   @override
-  _TapBoxAState createState() => _TapBoxAState();
+  _ParentWidgetState createState() => _ParentWidgetState();
 }
 
-class _TapBoxAState extends State<TapBoxA> {
+class _ParentWidgetState extends State<ParentWidget> {
   bool _active = false;
+
+  @override
+  Widget build(BuildContext context) => Container(
+    child: TapBoxB(
+      active: _active,
+      onChanged: _handleTapBoxChanged,
+    ),
+  );
+
+  void _handleTapBoxChanged(bool newValue) {
+    setState(() {
+      _active = newValue;
+    });
+  }
+}
+
+class TapBoxB extends StatelessWidget {
+  TapBoxB({ Key key, this.active: false, @required this.onChanged })
+      : assert(active != false),
+        assert(onChanged != null),
+        super(key: key);
+
+  final bool active;
+  final ValueChanged<bool> onChanged;
 
   @override
   Widget build(BuildContext context) => GestureDetector(
@@ -26,21 +50,19 @@ class _TapBoxAState extends State<TapBoxA> {
     child: Container(
       child: Center(
         child: Text(
-          _active ? 'Active' : 'Inactive',
+          active ? 'Active' : 'Inactive',
           style: TextStyle(fontSize: 32.0, color: Colors.white),
         ),
       ),
       width: 200.0,
       height: 200.0,
       decoration: BoxDecoration(
-        color: _active ? Colors.lightGreen[700] : Colors.grey[600],
+        color: active ? Colors.lightGreen[700] : Colors.grey[600],
       ),
     ),
   );
 
   void _handleTap() {
-    setState(() {
-      _active = !_active;
-    });
+    onChanged(!active);
   }
 }
