@@ -1,68 +1,70 @@
 import 'package:flutter/material.dart';
 
+class Todo {
+  final String title;
+  final String description;
+
+  Todo({ @required this.title, @required this.description })
+      : assert(title != null),
+        assert(description != null);
+}
+
 void main() => runApp(MaterialApp(
   title: 'Navigation',
-  home: Scaffold(
-    appBar: AppBar(
-      title: Text('TapBox'),
-    ),
-    body: Center(
-      child: ParentWidget(),
-    ),
+  home: TodoScreen(
+    todos: List<Todo>.generate(20, (i) => Todo(
+      title: 'TODO $i',
+      description: 'TODO $i の詳細'
+    )),
   ),
 ));
 
-class ParentWidget extends StatefulWidget {
-  @override
-  _ParentWidgetState createState() => _ParentWidgetState();
-}
+class TodoScreen extends StatelessWidget {
+  final List<Todo> _todos;
 
-class _ParentWidgetState extends State<ParentWidget> {
-  bool _active = false;
-
-  @override
-  Widget build(BuildContext context) => Container(
-    child: TapBoxB(
-      active: _active,
-      onChanged: _handleTapBoxChanged,
-    ),
-  );
-
-  void _handleTapBoxChanged(bool newValue) {
-    setState(() {
-      _active = newValue;
-    });
-  }
-}
-
-class TapBoxB extends StatelessWidget {
-  TapBoxB({ Key key, this.active: false, @required this.onChanged })
-      : assert(active != false),
-        assert(onChanged != null),
+  TodoScreen({ Key key, @required List<Todo> todos })
+      : assert(todos != null),
+        this._todos = todos,
         super(key: key);
 
-  final bool active;
-  final ValueChanged<bool> onChanged;
-
   @override
-  Widget build(BuildContext context) => GestureDetector(
-    onTap: _handleTap,
-    child: Container(
-      child: Center(
-        child: Text(
-          active ? 'Active' : 'Inactive',
-          style: TextStyle(fontSize: 32.0, color: Colors.white),
-        ),
-      ),
-      width: 200.0,
-      height: 200.0,
-      decoration: BoxDecoration(
-        color: active ? Colors.lightGreen[700] : Colors.grey[600],
+  Widget build(BuildContext context) => Scaffold(
+    appBar: AppBar(
+      title: Text('TODOリスト'),
+    ),
+    body: ListView.builder(
+      itemCount: _todos.length,
+      itemBuilder: (context, index) => ListTile(
+        title: Text(_todos[index].title),
+        onTap: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => DetailScreen(todo: _todos[index]),
+            ),
+          );
+        },
       ),
     ),
   );
+}
 
-  void _handleTap() {
-    onChanged(!active);
-  }
+class DetailScreen extends StatelessWidget {
+  final Todo _todo;
+
+  DetailScreen({ Key key, @required Todo todo })
+      :assert(todo != null),
+        this._todo = todo,
+        super(key: key);
+
+  @override
+  Widget build(BuildContext context) => Scaffold(
+    appBar: AppBar(
+      title: Text(_todo.title),
+    ),
+    body: Padding(
+      padding: EdgeInsets.all(16.0),
+      child: Text(_todo.description),
+    ),
+  );
 }
