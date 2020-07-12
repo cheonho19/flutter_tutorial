@@ -18,14 +18,11 @@ class LogoApp extends StatefulWidget {
 //Animationオブジェクトを定義するクラス
 class _LogoAppState extends State<LogoApp> with SingleTickerProviderStateMixin {
   AnimationController controller;
-  Animation<double> animation;
 
   @override
   void initState() {
     super.initState();
-    controller =
-        AnimationController(duration: Duration(seconds: 2), vsync: this);
-    animation = Tween<double>(begin: 0, end: 300).animate(controller)
+    controller = AnimationController(duration: Duration(seconds: 2), vsync: this)
       ..addStatusListener(_onAnimationStatusChanged);
     controller.forward();
   }
@@ -50,13 +47,15 @@ class _LogoAppState extends State<LogoApp> with SingleTickerProviderStateMixin {
 
   @override
   Widget build(BuildContext context) => GrowTransition(
-    animation: animation,
     child: LogoWidget(),
   );
 }
 
 //アニメーションを描画するクラス
 class GrowTransition extends StatelessWidget {
+  static final _opacityTween = Tween<double>(begin: 0.1, end: 1);
+  static final _sizeTween = Tween<double>(begin: 0, end: 300);
+
   GrowTransition({ Key key, this.child, this.animation })
       : assert(child != null),
         assert(animation != null),
@@ -71,10 +70,13 @@ class GrowTransition extends StatelessWidget {
       child: AnimatedBuilder(
         animation: animation,
         child: child,
-        builder: (context, child) => Container(
-          height: animation.value,
-          width: animation.value,
-          child: child,
+        builder: (context, child) => Opacity(
+          opacity: _opacityTween.evaluate(animation),
+          child: Container(
+            height: _sizeTween.evaluate(animation),
+            width: _sizeTween.evaluate(animation),
+            child: child,
+          ),
         ),
       ),
     ),
