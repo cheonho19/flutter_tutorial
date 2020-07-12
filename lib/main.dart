@@ -7,7 +7,6 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) => MaterialApp(
     home: LogoApp(),
-
   );
 }
 
@@ -16,6 +15,7 @@ class LogoApp extends StatefulWidget {
   _LogoAppState createState() => _LogoAppState();
 }
 
+//Animationオブジェクトを定義するクラス
 class _LogoAppState extends State<LogoApp> with SingleTickerProviderStateMixin {
   AnimationController controller;
   Animation<double> animation;
@@ -36,24 +36,43 @@ class _LogoAppState extends State<LogoApp> with SingleTickerProviderStateMixin {
   }
 
   @override
-  Widget build(BuildContext context) => AnimatedLogo(animation: animation);
+  Widget build(BuildContext context) => GrowTransition(
+    animation: animation,
+    child: LogoWidget(),
+  );
 }
-class AnimatedLogo extends AnimatedWidget {
-  AnimatedLogo({ Key key, Animation<double> animation })
-      : super(key: key, listenable: animation);
+
+//アニメーションを描画するクラス
+class GrowTransition extends StatelessWidget {
+  GrowTransition({ Key key, this.child, this.animation })
+      : assert(child != null),
+        assert(animation != null),
+        super(key: key);
+
+  final Widget child;
+  final Animation<double> animation;
 
   @override
-  Widget build(BuildContext context) {
-    final Animation<double> animation = listenable;
-    return Scaffold(
-      body: Center(
-        child: Container(
-          margin: EdgeInsets.symmetric(vertical: 10),
+  Widget build(BuildContext context) => Scaffold(
+    body: Center(
+      child: AnimatedBuilder(
+        animation: animation,
+        child: child,
+        builder: (context, child) => Container(
           height: animation.value,
           width: animation.value,
-          child: FlutterLogo(),
+          child: child,
         ),
       ),
-    );
-  }
+    ),
+  );
+}
+
+//ロゴを描画するクラス
+class LogoWidget extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) => Container(
+    margin: EdgeInsets.symmetric(vertical: 10),
+    child: FlutterLogo(),
+  );
 }
