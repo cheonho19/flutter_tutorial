@@ -1,92 +1,50 @@
 import 'package:flutter/material.dart';
-void main() => runApp(MaterialApp(
-  title: 'Navigation',
-  home: Scaffold(
-    appBar: AppBar(
-      title: Text('TapBox'),
-    ),
-    body: Center(
-      child: ParentWidget(),
-    ),
-  ),
-));
+import 'package:flutter/animation.dart';
 
-class ParentWidget extends StatefulWidget {
+void main() => runApp(MyApp());
+
+class MyApp extends StatelessWidget {
   @override
-  _ParentWidgetState createState() => _ParentWidgetState();
-}
+  Widget build(BuildContext context) => MaterialApp(
+    home: LogoApp(),
 
-class _ParentWidgetState extends State<ParentWidget> {
-  bool _active = false;
-
-  @override
-  Widget build(BuildContext context) => Container(
-    child: TapBoxC(
-      active: _active,
-      onChanged: _handleTapBoxChanged,
-    ),
   );
+}
 
-  void _handleTapBoxChanged(bool newValue) {
-    setState(() {
-      _active = newValue;
-    });
+class LogoApp extends StatefulWidget {
+  @override
+  _LogoAppState createState() => _LogoAppState();
+}
+
+class _LogoAppState extends State<LogoApp> with SingleTickerProviderStateMixin {
+  AnimationController controller;
+  Animation<double> animation;
+
+  @override
+  void initState() {
+    super.initState();
+    controller = AnimationController(duration: Duration(seconds: 2), vsync: this)
+      ..addListener(() {
+        setState(() {});
+      });;
+    animation = Tween<double>(begin: 0, end: 300).animate(controller);
   }
-}
-
-class TapBoxC extends StatefulWidget {
-  @override
-  _TapBoxCState createState() => _TapBoxCState();
-}
-
-class _TapBoxCState extends State<TapBoxC> {
-  _TapBoxCState({ Key key, this.active: false, @required this.onChanged });
-     // : assert(active != false),
-        //assert(onChanged != null),
-        //super(key: key);
-  final bool active;
-  final ValueChanged<bool> onChanged;
-  bool _highlight = false;
 
   @override
-  Widget build(BuildContext context) => GestureDetector(
-    onTapDown: _handleTapDown,
-    onTapUp: _handleTapUp,
-    onTapCancel: _handleTapCancel,
-    onTap: _handleTap,
-    child: Container(
-      child: Text(widget.active ? 'Active' : 'Inactive', style: TextStyle(
-        fontSize: 32.0,
-        color: Colors.white,
-      )),
-      width: 200.0,
-      height: 200.0,
-      decoration: BoxDecoration(
-        color: widget.active ? Colors.lightGreen[700] : Colors.grey[600],
-        border: _highlight ? Border.all(
-          color: Colors.teal[700],
-          width: 10.0,
-        ) : null,
+  void dispose() {
+    controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) => Scaffold(
+    body: Center(
+      child: Container(
+        margin: EdgeInsets.symmetric(vertical: 10),
+        height: animation.value,
+        width: animation.value,
+        child: FlutterLogo(),
       ),
     ),
   );
-
-  void _handleTapDown(TapDownDetails details) {
-    setState(() {
-      _highlight = true;
-    });
-  }
-  void _handleTapUp(TapUpDetails details) {
-    setState(() {
-      _highlight = false;
-    });
-  }
-  void _handleTapCancel() {
-    setState(() {
-      _highlight = false;
-    });
-  }
-  void _handleTap() {
-    widget.onChanged(!widget.active);
-  }
 }
