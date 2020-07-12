@@ -28,6 +28,7 @@ class _LogoAppState extends State<LogoApp> with SingleTickerProviderStateMixin {
         setState(() {});
       });;
     animation = Tween<double>(begin: 0, end: 300).animate(controller);
+    controller.forward();
   }
 
   @override
