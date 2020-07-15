@@ -16,9 +16,7 @@ class Inherited extends InheritedWidget {
       }) {
     return observe
         ? context.inheritFromWidgetOfExactType(Inherited)
-        : context
-        .ancestorInheritedElementForWidgetOfExactType(Inherited)
-        .widget;
+        : context.ancestorInheritedElementForWidgetOfExactType(Inherited).widget;
   }
 
   @override

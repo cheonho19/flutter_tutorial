@@ -2,20 +2,29 @@ import 'package:flutter/material.dart';
 import 'no_ref_to_important_data_widget.dart';
 import 'another_widget.dart';
 import 'ImportantData.dart';
+import 'inherited_widget.dart';
 
 class MyWidget extends StatefulWidget {
   final String title;
 
+  _MyWidgetState _myWidgetState;
+
+  _MyWidgetState get state => _myWidgetState;
+
   MyWidget({Key key, this.title}) : super(key: key);
 
   @override
-  MyWidgetState createState() => MyWidgetState();
+  _MyWidgetState createState() {
+    _myWidgetState = _MyWidgetState();
+    return _myWidgetState;
+  }
 }
 
-class MyWidgetState extends State<MyWidget> {
+class _MyWidgetState extends State<MyWidget> {
   ImportantData importantData = ImportantData();
+  GlobalKey<AnotherWidgetState> anotherWidgetStateGlobalKey = GlobalKey();
 
-  doImportantThings() {
+  _doImportantThings() {
     setState(() {
       importantData.increment();
     });
@@ -24,6 +33,29 @@ class MyWidgetState extends State<MyWidget> {
   @override
   Widget build(BuildContext context) {
     debugPrint("MyWidget is built");
-    return AnotherWidget(importantData: importantData);
+    return Inherited(
+        importantData: importantData,
+        child: Scaffold(
+          appBar: AppBar(title: Text(widget.title)),
+          body: Center(
+            child: Column(
+              children: <Widget>[
+                Text("MyWidget"),
+                Text(
+                    "Another Widget Direct Reference ${anotherWidgetStateGlobalKey.currentState?.widget?.importantData?.count ?? "empty"}"),
+                AnotherWidget(
+                    key: anotherWidgetStateGlobalKey,
+                    importantData: importantData),
+                const NoRefToImportantDataWidget()
+              ],
+            ),
+          ),
+          floatingActionButton: FloatingActionButton(
+            onPressed: _doImportantThings,
+            tooltip: 'Increment',
+            child: Icon(Icons.add),
+          ),
+          backgroundColor: Colors.green,
+        ));
   }
 }
